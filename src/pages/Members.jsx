@@ -17,7 +17,7 @@ const Mission = () => (
     {/* 右側にオブジェクト画像を配置 */}
     <div className="absolute right-20 top-0 bottom-0 w-2/3 flex items-center justify-end pointer-events-none">
       <img
-        src="/members-obj.jpg"
+        src={`${import.meta.env.BASE_URL}members-obj.jpg`}
         alt="オブジェクト"
         className="h-full w-auto object-contain opacity-90 scale-[1.3]"
       />

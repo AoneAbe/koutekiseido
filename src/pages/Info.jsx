@@ -154,7 +154,7 @@ export const Info = () => {
         <div
           className="fixed w-full h-screen bg-no-repeat opacity-20"
           style={{
-            backgroundImage: 'url(/info-fixbgi.png)',
+            backgroundImage: `url(${import.meta.env.BASE_URL}info-fixbgi.png)`,
             backgroundSize: 'contain',  // サイズ指定（contain=画像全体, 100%=元のサイズ, 120%=1.2倍など）
             backgroundPosition: 'left center',  // 左右 上下（例: 'center top', 'left center', 'left bottom'）
             top: '20%',  // 上下位置調整（0%=上端, 50%=中央, 100%=下端）※マイナス値も可能
