@@ -6,5 +6,5 @@ export default defineConfig({
   plugins: [react()],
   // GitHub Pagesでデプロイする場合は、リポジトリ名を設定してください
   // 例: base: '/your-repo-name/'
-  base: '/',
+  base: '/koutekiseido/',
 })
