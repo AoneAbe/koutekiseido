@@ -4173,4 +4173,4 @@ void main() {
             cursor: none !important;
           }
         }
-      `}),O.jsx(Lq,{}),O.jsx(Uq,{}),O.jsx(_8,{}),O.jsx("main",{className:"flex-grow",children:O.jsxs(UO,{children:[O.jsx(kd,{path:"/",element:O.jsx(pq,{})}),O.jsx(kd,{path:"/members",element:O.jsx(_q,{})}),O.jsx(kd,{path:"/contact",element:O.jsx(Tq,{})}),O.jsx(kd,{path:"/info",element:O.jsx(Dq,{})}),O.jsx(kd,{path:"/info/:id",element:O.jsx(Nq,{})})]})}),O.jsx(b8,{})]})}FL.createRoot(document.getElementById("root")).render(O.jsx(K.StrictMode,{children:O.jsx(t4,{children:O.jsx(Oq,{})})}));
+      `}),O.jsx(Lq,{}),O.jsx(Uq,{}),O.jsx(_8,{}),O.jsx("main",{className:"flex-grow",children:O.jsxs(UO,{children:[O.jsx(kd,{path:"/",element:O.jsx(pq,{})}),O.jsx(kd,{path:"/members",element:O.jsx(_q,{})}),O.jsx(kd,{path:"/contact",element:O.jsx(Tq,{})}),O.jsx(kd,{path:"/info",element:O.jsx(Dq,{})}),O.jsx(kd,{path:"/info/:id",element:O.jsx(Nq,{})})]})}),O.jsx(b8,{})]})}FL.createRoot(document.getElementById("root")).render(O.jsx(K.StrictMode,{children:O.jsx(t4,{basename:"/koutekiseido",children:O.jsx(Oq,{})})}));
