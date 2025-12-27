@@ -69,7 +69,7 @@ export const Header = () => {
           {navItems.map(item => (
             <NavLink key={item.label} href={item.href}>{item.label}</NavLink>
           ))}
-          <Button variant="primary" className="py-2 px-5 text-sm rounded-full shadow-none hover:shadow-lg" onClick={() => window.location.href = '/contact'}>
+          <Button variant="primary" className="py-2 px-5 text-sm rounded-full shadow-none hover:shadow-lg" href="/contact">
             お問い合わせ
           </Button>
         </nav>
@@ -99,11 +99,11 @@ export const Header = () => {
                   </NavLink>
                 ))}
                 <div className="mt-8 flex flex-col gap-4">
-                  <Button variant="primary" className="w-full justify-between group rounded-full" onClick={() => { setIsOpen(false); window.location.href = '/#seminar'; }}>
+                  <Button variant="primary" className="w-full justify-between group rounded-full" href="/#seminar" onClick={() => setIsOpen(false)}>
                     無料セミナーに参加
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
-                  <Button variant="secondary" className="w-full justify-center rounded-full" onClick={() => { setIsOpen(false); window.location.href = '/contact'; }}>
+                  <Button variant="secondary" className="w-full justify-center rounded-full" href="/contact" onClick={() => setIsOpen(false)}>
                     お問い合わせ
                   </Button>
                 </div>

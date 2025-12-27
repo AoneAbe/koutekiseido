@@ -2,7 +2,22 @@ import React from 'react';
 import { Container } from '../ui/Section';
 import { Logo } from '../ui/Logo';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+
+const NavLink = ({ href, children, className }) => {
+  const isHash = href.startsWith('#');
+  const isHome = useLocation().pathname === '/';
+
+  const target = isHash && !isHome ? `/${href}` : href;
+  const Component = isHash && isHome ? 'a' : Link;
+  const props = isHash && isHome ? { href } : { to: target };
+
+  return (
+    <Component {...props} className={className}>
+      {children}
+    </Component>
+  );
+};
 
 export const Footer = () => {
   return (
@@ -31,12 +46,12 @@ export const Footer = () => {
           <div>
             <h3 className="font-bold text-lg mb-6">コンテンツ</h3>
             <ul className="space-y-4">
-              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />ホーム</Link></li>
-              <li><a href="/#about" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />私たちについて</a></li>
-              <li><a href="/#business" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />サービス</a></li>
-              <li><a href="/#reasons" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />選ばれる理由</a></li>
-              <li><a href="/members" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />役職員一覧</a></li>
-              <li><a href="/info" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />お知らせ</a></li>
+              <li><NavLink href="/" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />ホーム</NavLink></li>
+              <li><NavLink href="/#about" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />私たちについて</NavLink></li>
+              <li><NavLink href="/#business" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />サービス</NavLink></li>
+              <li><NavLink href="/#reasons" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />選ばれる理由</NavLink></li>
+              <li><NavLink href="/members" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />役職員一覧</NavLink></li>
+              <li><NavLink href="/info" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />お知らせ</NavLink></li>
             </ul>
           </div>
 
@@ -46,9 +61,9 @@ export const Footer = () => {
             <ul className="space-y-4">
               {['教育研修・セミナー', '行政・企業連携', '教材・コンテンツ制作', '講師育成・認定', 'デジタル学習', 'コンサルティング'].map((item) => (
                 <li key={item}>
-                  <a href="/#business" className="text-gray-400 hover:text-white transition-colors">
+                  <NavLink href="/#business" className="text-gray-400 hover:text-white transition-colors">
                     {item}
-                  </a>
+                  </NavLink>
                 </li>
               ))}
             </ul>
