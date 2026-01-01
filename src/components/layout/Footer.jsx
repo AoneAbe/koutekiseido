@@ -27,7 +27,7 @@ export const Footer = () => {
           {/* Column 1: Info */}
           <div className="space-y-6">
             <Link to="/">
-              <Logo className="text-white" textClassName="text-white" />
+              <Logo className="text-white" textClassName="text-white" src={`${import.meta.env.BASE_URL}shadanhouzin/logo-09.svg`} />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               国民一人ひとりが納税および社会保険制度に対する理解を深め、

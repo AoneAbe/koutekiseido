@@ -61,7 +61,7 @@ export const Header = () => {
       <Container className="h-full flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="z-50 relative">
-          <Logo textClassName="text-text-primary" />
+          <Logo textClassName="text-text-primary" src={`${import.meta.env.BASE_URL}shadanhouzin/logo-08.svg`} />
         </Link>
 
         {/* Desktop Nav */}
