@@ -236,7 +236,7 @@ const ProfileHolder = () => (
 );
 
 const Organization = () => (
-  <Section background="gray">
+  <Section id="Organization" background="gray">
     <Container>
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-text-primary">組織概要</h2>
