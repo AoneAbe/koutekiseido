@@ -23,9 +23,9 @@ export const Footer = () => {
   return (
     <footer className="bg-text-primary text-white pt-16 pb-8 relative z-10">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_0.9fr_0.9fr_0.9fr_1.5fr] gap-8 lg:gap-2 mb-12">
           {/* Column 1: Info */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:pr-8 lg:mr-4">
             <Link to="/">
               <Logo className="text-white" textClassName="text-white" src={`${import.meta.env.BASE_URL}shadanhouzin/logo-09.svg`} />
             </Link>
@@ -42,50 +42,49 @@ export const Footer = () => {
             </div> */}
           </div>
 
-          {/* Column 2: Links */}
+          {/* Column 2: Home */}
           <div>
-            <h3 className="font-bold text-lg mb-6">コンテンツ</h3>
+            <NavLink href="/" className="font-bold text-lg mb-6 block hover:text-primary transition-colors">Home</NavLink>
             <ul className="space-y-4">
-              <li><NavLink href="/" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />ホーム</NavLink></li>
               <li><NavLink href="/#about" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />私たちについて</NavLink></li>
               <li><NavLink href="/#business" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />サービス</NavLink></li>
               <li><NavLink href="/#reasons" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />選ばれる理由</NavLink></li>
-              <li><NavLink href="/members" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />役職員一覧</NavLink></li>
-              <li><NavLink href="/info" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />お知らせ</NavLink></li>
+              <li><NavLink href="/#news" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />お知らせ</NavLink></li>
+              <li><NavLink href="/#access" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />アクセス</NavLink></li>
             </ul>
           </div>
 
-          {/* Column 3: Business */}
+          {/* Column 3: Members */}
           <div>
-            <h3 className="font-bold text-lg mb-6">事業案内</h3>
+            <NavLink href="/members" className="font-bold text-lg mb-6 block hover:text-primary transition-colors">Members</NavLink>
             <ul className="space-y-4">
-              {['教育研修・セミナー', '行政・企業連携', '教材・コンテンツ制作', '講師育成・認定', 'デジタル学習', 'コンサルティング'].map((item) => (
-                <li key={item}>
-                  <NavLink href="/#business" className="text-gray-400 hover:text-white transition-colors">
-                    {item}
-                  </NavLink>
-                </li>
-              ))}
+              <li><NavLink href="/members" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />ミッション</NavLink></li>
+              <li><NavLink href="/members#BigProfile" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />代表理事</NavLink></li>
+              <li><NavLink href="/members#Organization" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />組織概要</NavLink></li>
             </ul>
           </div>
 
-          {/* Column 4: Contact */}
+          {/* Column 4: Info */}
           <div>
-            <h3 className="font-bold text-lg mb-6">お問い合わせ</h3>
+            <NavLink href="/info" className="font-bold text-lg mb-6 block hover:text-primary transition-colors">Info</NavLink>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3 text-gray-400">
-                <MapPin className="w-5 h-5 mt-1 text-primary shrink-0" />
+              <li><NavLink href="/info" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />お知らせ一覧</NavLink></li>
+            </ul>
+          </div>
+
+          {/* Column 5: Contact */}
+          <div>
+            <NavLink href="/contact" className="font-bold text-lg mb-6 block hover:text-primary transition-colors">お問い合わせ</NavLink>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 text-gray-400 text-sm">
+                <MapPin className="w-4 h-4 mt-1 text-primary shrink-0" />
                 <span>〒105-0011<br />東京都港区芝公園4-2-8</span>
-              </li>
-              {/* <li className="flex items-center gap-3 text-gray-400">
-                <Phone className="w-5 h-5 text-primary shrink-0" />
-                <span>03-0000-0000</span>
-              </li> */}
-              <li className="flex items-center gap-3 text-gray-400">
-                <Mail className="w-5 h-5 text-primary shrink-0" />
-                <span>support@koutekiseido-japan.com</span>
-              </li>
-            </ul>
+              </div>
+              <div className="flex items-center gap-3 text-gray-400 text-sm">
+                <Mail className="w-4 h-4 text-primary shrink-0" />
+                <span className="break-all">support@koutekiseido-japan.com</span>
+              </div>
+            </div>
           </div>
         </div>
 

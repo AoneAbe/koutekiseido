@@ -1,0 +1,106 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- グラデーション定義 -->
+    <!-- メインの光沢グラデーション（白） -->
+    <radialGradient id="glossyWhite" cx="30%" cy="30%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#f0f9ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0f2fe;stop-opacity:0.95" />
+    </radialGradient>
+
+    <!-- 光沢グラデーション（ブルー） -->
+    <radialGradient id="glossyBlue" cx="35%" cy="35%">
+      <stop offset="0%" style="stop-color:#e0f2fe;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#bae6fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7dd3fc;stop-opacity:0.9" />
+    </radialGradient>
+
+    <!-- リングの光沢 -->
+    <linearGradient id="ringGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#f0f9ff;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#e0f2fe;stop-opacity:0.95" />
+      <stop offset="100%" style="stop-color:#bae6fd;stop-opacity:0.9" />
+    </linearGradient>
+
+    <!-- セカンダリリングの光沢 -->
+    <linearGradient id="ringGlossSecondary" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e0f2fe;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#bae6fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7dd3fc;stop-opacity:0.85" />
+    </linearGradient>
+
+    <!-- ハイライト用 -->
+    <radialGradient id="highlight" cx="40%" cy="40%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- ぼかしフィルター -->
+    <filter id="softGlow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+    </filter>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15" flood-color="#0ea5e9"/>
+    </filter>
+  </defs>
+
+  <!-- 背景のソフトな光 -->
+  <circle cx="400" cy="400" r="300" fill="url(#glossyBlue)" opacity="0.15" filter="url(#softGlow)"/>
+
+  <!-- メインリング（大） -->
+  <g filter="url(#shadow)">
+    <circle cx="400" cy="350" r="220" fill="none" stroke="url(#ringGloss)" stroke-width="45" opacity="0.95"/>
+    <!-- ハイライト -->
+    <ellipse cx="280" cy="250" rx="80" ry="60" fill="url(#highlight)" opacity="0.6"/>
+  </g>
+
+  <!-- セカンダリリング（交差） -->
+  <g transform="rotate(60 400 500)" filter="url(#shadow)">
+    <ellipse cx="400" cy="500" rx="180" ry="140" fill="none" stroke="url(#ringGlossSecondary)" stroke-width="35" opacity="0.9"/>
+    <!-- ハイライト -->
+    <ellipse cx="300" cy="420" rx="70" ry="50" fill="url(#highlight)" opacity="0.5"/>
+  </g>
+
+  <!-- 中央の球体（コア） -->
+  <g filter="url(#shadow)">
+    <circle cx="400" cy="450" r="95" fill="url(#glossyWhite)" opacity="0.98"/>
+    <!-- 光沢ハイライト -->
+    <ellipse cx="360" cy="410" rx="45" ry="35" fill="url(#highlight)" opacity="0.8"/>
+    <!-- 反射光 -->
+    <ellipse cx="430" cy="480" rx="25" ry="20" fill="#ffffff" opacity="0.4"/>
+  </g>
+
+  <!-- 小さな浮遊球体1 -->
+  <g filter="url(#shadow)">
+    <circle cx="580" cy="300" r="45" fill="url(#glossyBlue)" opacity="0.9"/>
+    <ellipse cx="560" cy="285" rx="20" ry="15" fill="url(#highlight)" opacity="0.7"/>
+  </g>
+
+  <!-- 小さな浮遊球体2 -->
+  <g filter="url(#shadow)">
+    <circle cx="250" cy="580" r="55" fill="url(#glossyWhite)" opacity="0.95"/>
+    <ellipse cx="230" cy="560" rx="25" ry="18" fill="url(#highlight)" opacity="0.75"/>
+  </g>
+
+  <!-- 小さな浮遊球体3 -->
+  <g filter="url(#shadow)">
+    <circle cx="600" cy="650" r="38" fill="url(#glossyBlue)" opacity="0.88"/>
+    <ellipse cx="585" cy="638" rx="17" ry="13" fill="url(#highlight)" opacity="0.65"/>
+  </g>
+
+  <!-- 追加のリング（下部） -->
+  <g transform="rotate(-45 400 700)" filter="url(#shadow)">
+    <ellipse cx="400" cy="700" rx="150" ry="100" fill="none" stroke="url(#ringGloss)" stroke-width="28" opacity="0.85"/>
+    <ellipse cx="320" cy="650" rx="60" ry="40" fill="url(#highlight)" opacity="0.45"/>
+  </g>
+
+  <!-- 微細な光の粒子 -->
+  <circle cx="320" cy="250" r="8" fill="#ffffff" opacity="0.6" filter="url(#softGlow)"/>
+  <circle cx="480" cy="320" r="6" fill="#bae6fd" opacity="0.5" filter="url(#softGlow)"/>
+  <circle cx="380" cy="600" r="7" fill="#ffffff" opacity="0.55" filter="url(#softGlow)"/>
+  <circle cx="520" cy="520" r="5" fill="#e0f2fe" opacity="0.6" filter="url(#softGlow)"/>
+  <circle cx="280" cy="450" r="6" fill="#ffffff" opacity="0.5" filter="url(#softGlow)"/>
+  <circle cx="560" cy="480" r="5" fill="#bae6fd" opacity="0.55" filter="url(#softGlow)"/>
+</svg>

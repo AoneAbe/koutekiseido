@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Section, Container } from '../ui/Section';
 import { ShieldCheck, Monitor, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -53,7 +53,10 @@ const ArchitecturalStructure = () => {
   );
 };
 
-const Scene = () => {
+const Scene = ({ isMobile }) => {
+  // スマホでは小さく表示
+  const objectScale = isMobile ? 0.5 : 1;
+
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
@@ -61,9 +64,11 @@ const Scene = () => {
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
       <directionalLight position={[-10, -10, -10]} intensity={1} color="#3b82f6" />
-      
+
       <Float speed={0.5} rotationIntensity={0.1} floatIntensity={0.2}>
-        <ArchitecturalStructure />
+        <group scale={objectScale}>
+          <ArchitecturalStructure />
+        </group>
       </Float>
     </>
   );
@@ -86,15 +91,31 @@ const FeatureCard = ({ icon: Icon, title, desc, delay }) => (
 );
 
 export const Introduction = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section id="about" className="relative w-full py-20 lg:py-32 overflow-hidden bg-gray-50">
-      
+
       {/* 3D Background Layer - 全画面に配置して「枠」をなくす */}
       <div className="absolute inset-0 w-full h-full z-0">
-        {/* 右側に寄せて配置 */}
-        <div className="absolute top-0 right-[-20%] w-[140%] h-full opacity-60 pointer-events-none md:opacity-100 md:w-full md:right-[-25%]">
+        {/* スマホでは中央、デスクトップでは右側に配置 */}
+        <div className={`absolute top-0 h-full pointer-events-none ${
+          isMobile
+            ? 'left-1/2 -translate-x-1/2 w-full opacity-50'
+            : 'right-[-25%] w-full opacity-100'
+        }`}>
             <Canvas gl={{ antialias: true, alpha: true }} dpr={[1, 2]}>
-              <Scene />
+              <Scene isMobile={isMobile} />
             </Canvas>
         </div>
         {/* グラデーションオーバーレイで馴染ませる */}

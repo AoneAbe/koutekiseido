@@ -98,12 +98,8 @@ export const Header = () => {
                     {item.label}
                   </NavLink>
                 ))}
-                <div className="mt-8 flex flex-col gap-4">
-                  <Button variant="primary" className="w-full justify-between group rounded-full" href="/#seminar" onClick={() => setIsOpen(false)}>
-                    無料セミナーに参加
-                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                  <Button variant="secondary" className="w-full justify-center rounded-full" href="/contact" onClick={() => setIsOpen(false)}>
+                <div className="mt-8">
+                  <Button variant="primary" className="w-full justify-center rounded-full" href="/contact" onClick={() => setIsOpen(false)}>
                     お問い合わせ
                   </Button>
                 </div>

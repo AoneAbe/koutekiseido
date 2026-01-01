@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Container, Section } from '../components/ui/Section';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Float, PerspectiveCamera, Environment, Sphere } from '@react-three/drei';
 
 const PageHero = ({ title, subtitle }) => (
   <section className="relative h-[30vh] md:h-[40vh] bg-background-secondary flex items-center justify-center overflow-hidden">
@@ -11,17 +13,128 @@ const PageHero = ({ title, subtitle }) => (
   </section>
 );
 
+// 光沢のある3Dリングオブジェクト
+const GlossyRings = () => {
+  const groupRef = useRef();
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    groupRef.current.rotation.x = Math.sin(t / 3) * 0.3;
+    groupRef.current.rotation.y = t / 5;
+  });
+
+  const glossyMaterial = {
+    color: "#FFFFFF",
+    roughness: 0.05,
+    metalness: 0.2,
+    clearcoat: 1,
+    clearcoatRoughness: 0.05,
+    reflectivity: 1,
+  };
+
+  return (
+    <group ref={groupRef}>
+      {/* メインリング */}
+      <mesh rotation={[Math.PI / 2.5, 0, 0]}>
+        <torusGeometry args={[2.5, 0.35, 64, 128]} />
+        <meshPhysicalMaterial {...glossyMaterial} />
+      </mesh>
+
+      {/* 交差するリング */}
+      <mesh rotation={[-Math.PI / 3.5, Math.PI / 2.2, 0]}>
+        <torusGeometry args={[2, 0.28, 64, 128]} />
+        <meshPhysicalMaterial
+          {...glossyMaterial}
+          color="#E0F2FE"
+          metalness={0.3}
+        />
+      </mesh>
+
+      {/* 小さなリング */}
+      <mesh rotation={[Math.PI / 4, Math.PI / 3, 0]}>
+        <torusGeometry args={[1.5, 0.22, 64, 128]} />
+        <meshPhysicalMaterial
+          {...glossyMaterial}
+          color="#BAE6FD"
+          metalness={0.25}
+        />
+      </mesh>
+
+      {/* 中央の球体 */}
+      <Sphere args={[0.5, 32, 32]}>
+        <meshPhysicalMaterial
+          color="#FFFFFF"
+          roughness={0}
+          metalness={0.1}
+          clearcoat={1}
+          clearcoatRoughness={0}
+          transmission={0.3}
+          thickness={2}
+        />
+      </Sphere>
+    </group>
+  );
+};
+
+// 浮遊する小さな球体
+const FloatingOrbs = () => {
+  return (
+    <>
+      {[...Array(6)].map((_, i) => (
+        <Float key={i} speed={1.5 + i * 0.3} rotationIntensity={1} floatIntensity={1.5}>
+          <Sphere args={[0.15 + Math.random() * 0.15, 32, 32]} position={[
+            (Math.random() - 0.5) * 7,
+            (Math.random() - 0.5) * 5,
+            (Math.random() - 0.5) * 3
+          ]}>
+            <meshPhysicalMaterial
+              color={i % 2 === 0 ? "#BAE6FD" : "#FFFFFF"}
+              transparent
+              opacity={0.7}
+              roughness={0}
+              metalness={0}
+              clearcoat={1}
+              clearcoatRoughness={0.1}
+            />
+          </Sphere>
+        </Float>
+      ))}
+    </>
+  );
+};
+
+const MissionScene = () => {
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={45} />
+      <Environment preset="studio" />
+      <ambientLight intensity={1.2} color="#ffffff" />
+      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} />
+      <pointLight position={[-10, -10, -10]} intensity={1.5} color="#0ea5e9" />
+
+      <Float speed={1.2} rotationIntensity={0.3} floatIntensity={0.4}>
+        <GlossyRings />
+      </Float>
+
+      <FloatingOrbs />
+    </>
+  );
+};
+
 // Mission - ミッションセクション
 const Mission = () => (
   <section className="relative w-full flex items-center justify-center overflow-hidden bg-white">
-    {/* 右側にオブジェクト画像を配置 */}
-    <div className="absolute right-20 top-0 bottom-0 w-2/3 flex items-center justify-end pointer-events-none">
-      <img
-        src={`${import.meta.env.BASE_URL}members-obj.jpg`}
-        alt="オブジェクト"
-        className="h-full w-auto object-contain opacity-90 scale-[1.3]"
-      />
+    {/* 右側に3Dオブジェクトを配置 */}
+    <div className="absolute right-0 md:right-[-10%] top-0 bottom-0 w-full md:w-2/3 flex items-center justify-end pointer-events-none">
+      <div className="w-full h-full opacity-80">
+        <Canvas gl={{ antialias: true, alpha: true }} dpr={[1, 2]}>
+          <MissionScene />
+        </Canvas>
+      </div>
     </div>
+
+    {/* グラデーションオーバーレイ */}
+    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none" />
 
     <Container className="relative z-10 text-center py-20 lg:py-32">
       <div className="max-w-5xl mx-auto">
@@ -48,7 +161,7 @@ const BigProfile = () => (
         {/* 左側50% - 画像 */}
         <div className="w-full md:w-1/2 px-4 md:px-8">
           <img
-            src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80&w=800"
+            src={`${import.meta.env.BASE_URL}shadanhouzin/boardmember/takumisawa.JPG`}
             alt="澤 拓実"
             className="w-full object-cover"
           />
@@ -94,18 +207,18 @@ const ProfileHolder = () => (
     <Container>
       <div className="flex flex-wrap">
         <ProfileCard
-          nameEn="Ginshi Saito"
-          nameJp="齋藤 吟史"
+          nameEn="Ginji Saito"
+          nameJp="齋藤 銀次"
           role="理事"
-          img="https://images.unsplash.com/photo-1537511446984-935f663eb1f4?auto=format&fit=crop&q=80&w=400"
+          img={`${import.meta.env.BASE_URL}shadanhouzin/boardmember/ginji_saito.JPG`}
           description="教育現場との架け橋となります。"
           paddingTop="3rem"
         />
         <ProfileCard
-          nameEn="Yuki Ozaki"
-          nameJp="尾崎 由紀"
+          nameEn="Yukinori Ozaki"
+          nameJp="尾崎 幸紀"
           role="理事"
-          img="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&q=80&w=400"
+          img={`${import.meta.env.BASE_URL}shadanhouzin/boardmember/yukinoriozaki.JPG`}
           description="女性の視点から制度活用を提案します。"
           paddingTop="6rem"
         />

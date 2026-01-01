@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Container } from '../ui/Section';
 import { Button } from '../ui/Button';
 import { ChevronRight, ArrowDown } from 'lucide-react';
@@ -76,20 +76,24 @@ const FloatingParticles = () => {
   );
 };
 
-const Scene = () => {
+const Scene = ({ isMobile }) => {
+  // スマホでは中央に小さく、デスクトップでは右側に配置
+  const objectPosition = isMobile ? [0, 0, 0] : [2.5, 0, 0];
+  const objectScale = isMobile ? 0.6 : 1;
+
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={45} />
-      
+
       {/* 明るいスタジオライティング */}
       <Environment preset="studio" />
       <ambientLight intensity={1} color="#ffffff" />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
       <pointLight position={[-10, -10, -10]} intensity={1} color="#0ea5e9" />
 
-      {/* オブジェクトを右側に寄せる (position={[2.5, 0, 0]}) */}
+      {/* オブジェクトの位置とスケールをレスポンシブに調整 */}
       <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-        <group position={[2.5, 0, 0]}>
+        <group position={objectPosition} scale={objectScale}>
           <ConnectingRings />
         </group>
       </Float>
@@ -102,13 +106,25 @@ const Scene = () => {
 };
 
 export const Hero = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section className="relative w-full h-[100svh] min-h-[600px] flex items-center bg-white overflow-hidden">
-      
+
       {/* 3D Background / Visual Area - 全画面化 */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Canvas gl={{ antialias: true, alpha: true }} dpr={[1, 2]}>
-          <Scene />
+          <Scene isMobile={isMobile} />
         </Canvas>
       </div>
 

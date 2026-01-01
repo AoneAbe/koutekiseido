@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Section, Container } from '../ui/Section';
 import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -217,13 +217,16 @@ const ReasonItem = ({ title, desc, delay }) => (
   </motion.div>
 );
 
-const Scene = () => {
+const Scene = ({ isMobile }) => {
+  // スマホでは小さく表示
+  const objectScale = isMobile ? 0.6 : 0.8;
+
   return (
     <>
       <ambientLight intensity={1} />
       <Float speed={1} rotationIntensity={0.2} floatIntensity={0.2}>
         <React.Suspense fallback={null}>
-          <group scale={0.8}>
+          <group scale={objectScale}>
             <DottedEarth />
           </group>
         </React.Suspense>
@@ -233,6 +236,18 @@ const Scene = () => {
 };
 
 export const Reasons = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const reasons = [
     {
       title: "専門家による監修",
@@ -253,31 +268,43 @@ export const Reasons = () => {
   ];
 
   return (
-    <Section id="reasons" background="white">
-      <Container>
+    <Section id="reasons" background="white" className="relative overflow-hidden">
+      {/* スマホでは背景として表示 */}
+      {isMobile && (
+        <div className="absolute inset-0 w-full h-full z-0 opacity-30">
+          <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+            <Scene isMobile={isMobile} />
+          </Canvas>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/60 pointer-events-none" />
+        </div>
+      )}
+
+      <Container className="relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Visual Content (3D) */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative order-2 lg:order-1 h-[400px] md:h-[500px] w-full cursor-pointer"
-          >
-             <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
-                <Scene />
+          {/* Visual Content (3D) - デスクトップのみ表示 */}
+          {!isMobile && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative order-2 lg:order-1 h-[400px] md:h-[500px] w-full cursor-pointer"
+            >
+              <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+                <Scene isMobile={isMobile} />
                 <OrbitControls enableZoom={false} enablePan={false} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI * 0.75} />
-             </Canvas>
-             
-             {/* Background Decoration */}
-             <div className="absolute inset-0 -z-10 bg-gradient-radial from-blue-50/50 to-transparent opacity-50" />
-          </motion.div>
+              </Canvas>
+
+              {/* Background Decoration */}
+              <div className="absolute inset-0 -z-10 bg-gradient-radial from-blue-50/50 to-transparent opacity-50" />
+            </motion.div>
+          )}
 
           {/* Text Content */}
           <div className="order-1 lg:order-2">
             <span className="block text-text-tertiary font-bold tracking-widest text-sm mb-4 font-en">WHY CHOOSE US</span>
             <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10">選ばれる理由</h2>
-            
+
             <div className="space-y-8">
               {reasons.map((reason, index) => (
                 <ReasonItem key={index} {...reason} delay={index * 0.1} />
