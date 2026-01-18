@@ -59,7 +59,7 @@ export const Footer = () => {
             <NavLink href="/members" className="font-bold text-lg mb-6 block hover:text-primary transition-colors">Members</NavLink>
             <ul className="space-y-4">
               <li><NavLink href="/members" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />ミッション</NavLink></li>
-              <li><NavLink href="/members#BigProfile" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />代表理事</NavLink></li>
+              <li><NavLink href="/members#ProfileHolder" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />メンバー</NavLink></li>
               <li><NavLink href="/members#Organization" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary" />組織概要</NavLink></li>
             </ul>
           </div>

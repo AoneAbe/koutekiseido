@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Container, Section } from '../components/ui/Section';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera, Environment, Sphere } from '@react-three/drei';
+import { useMembers } from '../hooks/useWordPressApi';
 
 const PageHero = ({ title, subtitle }) => (
   <section className="relative h-[30vh] md:h-[40vh] bg-background-secondary flex items-center justify-center overflow-hidden">
@@ -176,7 +177,7 @@ const BigProfile = () => (
           </div>
           <div className="text-text-secondary leading-relaxed" style={{ fontSize: '15px' }}>
             <p>
-              現代社会において、公的制度の理解は単なる知識にとどまらず、自分自身と家族を守るための必須の教養となっています。しかし、制度の複雑さや情報の非対称性により、多くの人々が適切な恩恵を受けられていない現状があります。私たちは、教育と啓発を通じてこの課題に取り組み、誰もが安心して暮らせる社会の実現を目指します。
+              
             </p>
           </div>
         </div>
@@ -185,52 +186,59 @@ const BigProfile = () => (
   </section>
 );
 
-// ProfileCard - 小さめのプロフィールカード
-const ProfileCard = ({ nameEn, nameJp, role, img, description, paddingTop }) => (
-  <div className="w-full md:w-1/3 px-4 md:px-8" style={{ paddingTop: paddingTop }}>
-    <div
-      className="w-full aspect-[3/4] bg-cover bg-center mb-4"
-      style={{ backgroundImage: `url(${img})` }}
-    />
-    <div className="pb-4 mb-4 border-b-2 border-text-primary">
-      <div className="font-bold text-text-primary mb-1 font-en" style={{ fontSize: '35px', lineHeight: '1.2' }}>{nameEn}</div>
-      <div className="text-text-tertiary mb-2" style={{ fontSize: '12px' }}>{role}</div>
-      <div className="font-bold text-text-primary" style={{ fontSize: '18px' }}>{nameJp}</div>
-    </div>
-    <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
+// ローディングスピナー
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-20">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
   </div>
 );
 
-// ProfileHolder - 残りのメンバーを3カラムで表示
-const ProfileHolder = () => (
+// ProfileCard - 小さめのプロフィールカード
+const ProfileCard = ({ nameEn, nameJp, role, img, description, index }) => {
+  // カードごとに異なるpadding-topを設定（段差をつけるため）
+  const paddingTops = ['1.5rem', '3rem', '6rem'];
+  const paddingTop = paddingTops[index % 3];
+
+  // 画像パスの処理（APIからの完全なURLか、ローカルパスかを判定）
+  const imgSrc = img.startsWith('http') ? img : `${import.meta.env.BASE_URL}${img}`;
+
+  return (
+    <div className="w-full md:w-1/3 px-4 md:px-8" style={{ paddingTop }}>
+      <div
+        className="w-full aspect-[3/4] bg-cover bg-center mb-4"
+        style={{ backgroundImage: `url(${imgSrc})` }}
+      />
+      <div className="pb-4 mb-4 border-b-2 border-text-primary">
+        <div className="font-bold text-text-primary mb-1 font-en" style={{ fontSize: '35px', lineHeight: '1.2' }}>{nameEn}</div>
+        <div className="text-text-tertiary mb-2" style={{ fontSize: '12px' }}>{role}</div>
+        <div className="font-bold text-text-primary" style={{ fontSize: '18px' }}>{nameJp}</div>
+      </div>
+      <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
+    </div>
+  );
+};
+
+// ProfileHolder - メンバーを動的に表示
+const ProfileHolder = ({ members, loading }) => (
   <section id="ProfileHolder" className="relative w-full py-20 bg-gray-50 overflow-hidden">
     <Container>
-      <div className="flex flex-wrap">
-        <ProfileCard
-          nameEn="Ginji Saito"
-          nameJp="齋藤 銀次"
-          role="理事"
-          img={`${import.meta.env.BASE_URL}shadanhouzin/boardmember/ginji_saito.JPG`}
-          description="教育現場との架け橋となります。"
-          paddingTop="3rem"
-        />
-        <ProfileCard
-          nameEn="Yukinori Ozaki"
-          nameJp="尾崎 幸紀"
-          role="理事"
-          img={`${import.meta.env.BASE_URL}shadanhouzin/boardmember/yukinoriozaki.JPG`}
-          description="女性の視点から制度活用を提案します。"
-          paddingTop="6rem"
-        />
-        <ProfileCard
-          nameEn="Example Name"
-          nameJp="例 太郎"
-          role="理事"
-          img="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400"
-          description="公正な社会の実現に尽力します。"
-          paddingTop="1.5rem"
-        />
-      </div>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="flex flex-wrap">
+          {members.map((member, index) => (
+            <ProfileCard
+              key={member.id}
+              nameEn={member.nameEn}
+              nameJp={member.nameJp}
+              role={member.role}
+              img={member.img}
+              description={member.description}
+              index={index}
+            />
+          ))}
+        </div>
+      )}
     </Container>
   </section>
 );
@@ -261,12 +269,14 @@ const Organization = () => (
 );
 
 export const Members = () => {
+  const { members, loading, error } = useMembers();
+
   return (
     <>
       <PageHero title="Members" subtitle="役職員一覧" />
       <Mission />
-      <BigProfile />
-      <ProfileHolder />
+      {/* <BigProfile /> */}
+      <ProfileHolder members={members} loading={loading} />
       <Organization />
     </>
   );

@@ -1,8 +1,12 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Sphere } from '@react-three/drei';
 import { Section, Container } from '../components/ui/Section';
 import { Button } from '../components/ui/Button';
+
+// Contact Form 7 のフォームID（WordPress管理画面で確認して設定）
+const CF7_FORM_ID = '29'; // ← ここを実際のフォームIDに変更してください
+const CF7_API_URL = `https://koutekiseido-japan.com/wp-json/contact-form-7/v1/contact-forms/${CF7_FORM_ID}/feedback`;
 
 const PageHero = ({ title, subtitle }) => (
   <section className="relative h-[30vh] bg-background-secondary flex items-center justify-center overflow-hidden">
@@ -101,47 +105,181 @@ const Scene3D = () => {
   );
 };
 
-const ContactForm = () => (
-  <form className="space-y-6">
-    <div className="grid md:grid-cols-2 gap-6">
-      <div>
-        <label className="block text-sm font-bold text-text-primary mb-2">お名前 <span className="text-red-500">*</span></label>
-        <input type="text" className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="山田 太郎" />
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    yourName: '',
+    yourKana: '',
+    yourEmail: '',
+    yourSubject: '',
+    yourMessage: ''
+  });
+  const [status, setStatus] = useState('idle'); // idle, sending, success, error
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    setErrorMessage('');
+
+    // FormDataオブジェクトを作成（Contact Form 7のフィールド名に合わせる）
+    const form = new FormData();
+    form.append('_wpcf7', CF7_FORM_ID);
+    form.append('_wpcf7_version', '5.9.8');
+    form.append('_wpcf7_locale', 'ja');
+    form.append('_wpcf7_unit_tag', `wpcf7-f${CF7_FORM_ID}-o1`);
+    form.append('your-name', formData.yourName);
+    form.append('your-kana', formData.yourKana);
+    form.append('your-email', formData.yourEmail);
+    form.append('your-subject', formData.yourSubject);
+    form.append('your-message', formData.yourMessage);
+
+    try {
+      const response = await fetch(CF7_API_URL, {
+        method: 'POST',
+        body: form,
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'mail_sent') {
+        setStatus('success');
+        setFormData({
+          yourName: '',
+          yourKana: '',
+          yourEmail: '',
+          yourSubject: '',
+          yourMessage: ''
+        });
+      } else {
+        setStatus('error');
+        setErrorMessage(result.message || '送信に失敗しました。');
+      }
+    } catch (err) {
+      setStatus('error');
+      setErrorMessage('通信エラーが発生しました。');
+    }
+  };
+
+  // 送信完了画面
+  if (status === 'success') {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-text-primary mb-4">送信完了</h3>
+        <p className="text-text-secondary mb-8">
+          お問い合わせありがとうございます。<br />
+          内容を確認の上、担当者よりご連絡いたします。
+        </p>
+        <button
+          onClick={() => setStatus('idle')}
+          className="text-primary font-bold hover:underline"
+        >
+          新しいお問い合わせを送る
+        </button>
       </div>
-      <div>
-        <label className="block text-sm font-bold text-text-primary mb-2">フリガナ <span className="text-red-500">*</span></label>
-        <input type="text" className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="ヤマダ タロウ" />
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-bold text-text-primary mb-2">お名前 <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            name="yourName"
+            value={formData.yourName}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            placeholder="山田 太郎"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-text-primary mb-2">フリガナ <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            name="yourKana"
+            value={formData.yourKana}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            placeholder="ヤマダ タロウ"
+          />
+        </div>
       </div>
-    </div>
-    
-    <div>
-      <label className="block text-sm font-bold text-text-primary mb-2">メールアドレス <span className="text-red-500">*</span></label>
-      <input type="email" className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="example@email.com" />
-    </div>
 
-    <div>
-      <label className="block text-sm font-bold text-text-primary mb-2">お問い合わせ種別 <span className="text-red-500">*</span></label>
-      <select className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white">
-        <option>選択してください</option>
-        <option>セミナーについて</option>
-        <option>入会について</option>
-        <option>取材・講演依頼</option>
-        <option>その他</option>
-      </select>
-    </div>
+      <div>
+        <label className="block text-sm font-bold text-text-primary mb-2">メールアドレス <span className="text-red-500">*</span></label>
+        <input
+          type="email"
+          name="yourEmail"
+          value={formData.yourEmail}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+          placeholder="example@email.com"
+        />
+      </div>
 
-    <div>
-      <label className="block text-sm font-bold text-text-primary mb-2">お問い合わせ内容 <span className="text-red-500">*</span></label>
-      <textarea rows="6" className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="ご自由にご記入ください"></textarea>
-    </div>
+      <div>
+        <label className="block text-sm font-bold text-text-primary mb-2">お問い合わせ種別 <span className="text-red-500">*</span></label>
+        <select
+          name="yourSubject"
+          value={formData.yourSubject}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white"
+        >
+          <option value="">選択してください</option>
+          <option value="セミナーについて">セミナーについて</option>
+          <option value="入会について">入会について</option>
+          <option value="取材・講演依頼">取材・講演依頼</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
 
-    <div className="text-center pt-4">
-      <Button variant="primary" className="w-full md:w-auto min-w-[200px]">
-        送信する
-      </Button>
-    </div>
-  </form>
-);
+      <div>
+        <label className="block text-sm font-bold text-text-primary mb-2">お問い合わせ内容 <span className="text-red-500">*</span></label>
+        <textarea
+          name="yourMessage"
+          value={formData.yourMessage}
+          onChange={handleChange}
+          required
+          rows="6"
+          className="w-full px-4 py-3 rounded-lg border border-border-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+          placeholder="ご自由にご記入ください"
+        ></textarea>
+      </div>
+
+      {status === 'error' && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+          {errorMessage}
+        </div>
+      )}
+
+      <div className="text-center pt-4">
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full md:w-auto min-w-[200px]"
+          disabled={status === 'sending'}
+        >
+          {status === 'sending' ? '送信中...' : '送信する'}
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 export const Contact = () => {
   return (

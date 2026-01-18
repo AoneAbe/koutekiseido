@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Container } from '../components/ui/Section';
-import { newsData } from '../data/newsData';
+import { useNewsDetail } from '../hooks/useWordPressApi';
 
 // ページヒーロー
 const PageHero = () => (
@@ -13,12 +13,19 @@ const PageHero = () => (
   </section>
 );
 
+// ローディングスピナー
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-20">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
+
 export const InfoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // IDに該当するお知らせを取得
-  const news = newsData.find((item) => item.id === id);
+  // APIからお知らせを取得
+  const { newsItem: news, loading, error } = useNewsDetail(id);
 
   // カテゴリーの色を設定
   const getCategoryColor = (category) => {
@@ -31,6 +38,20 @@ export const InfoDetail = () => {
         return 'bg-gray-500';
     }
   };
+
+  // ローディング中
+  if (loading) {
+    return (
+      <>
+        <PageHero />
+        <section className="relative py-20 bg-white">
+          <Container>
+            <LoadingSpinner />
+          </Container>
+        </section>
+      </>
+    );
+  }
 
   // お知らせが見つからない場合
   if (!news) {
@@ -117,9 +138,10 @@ export const InfoDetail = () => {
 
             {/* コンテンツ */}
             <div className="prose max-w-none mb-12">
-              <div className="text-text-secondary text-lg leading-relaxed whitespace-pre-wrap">
-                {news.content}
-              </div>
+              <div
+                className="text-text-secondary text-lg leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: news.content }}
+              />
             </div>
 
             {/* 戻るボタン（下部） */}

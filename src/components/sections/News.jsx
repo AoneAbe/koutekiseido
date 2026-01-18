@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Section, Container } from '../ui/Section';
 import { ArrowRight } from 'lucide-react';
-import { newsData } from '../../data/newsData';
+import { useNews } from '../../hooks/useWordPressApi';
 
 const NewsItem = ({ id, date, category, title }) => (
   <Link to={`/info/${id}`} className="group block border-b border-border-light py-6 hover:bg-background-secondary/50 transition-colors px-4 -mx-4 rounded-lg">
@@ -21,9 +21,26 @@ const NewsItem = ({ id, date, category, title }) => (
   </Link>
 );
 
+// ローディングスケルトン
+const LoadingSkeleton = () => (
+  <div className="space-y-6">
+    {[1, 2, 3].map((i) => (
+      <div key={i} className="animate-pulse border-b border-border-light py-6">
+        <div className="flex items-center gap-4 mb-2">
+          <div className="h-4 w-24 bg-gray-200 rounded"></div>
+          <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+        </div>
+        <div className="h-5 w-3/4 bg-gray-200 rounded"></div>
+      </div>
+    ))}
+  </div>
+);
+
 export const News = () => {
-  // newsDataから最新3件を取得
-  const newsItems = newsData.slice(0, 3);
+  const { news, loading } = useNews();
+
+  // 最新3件を取得
+  const newsItems = news.slice(0, 3);
 
   return (
     <Section id="news" background="white">
@@ -40,9 +57,13 @@ export const News = () => {
         </div>
 
         <div className="mb-8">
-          {newsItems.map((item, index) => (
-            <NewsItem key={index} {...item} />
-          ))}
+          {loading ? (
+            <LoadingSkeleton />
+          ) : (
+            newsItems.map((item) => (
+              <NewsItem key={item.id} {...item} />
+            ))
+          )}
         </div>
 
         <div className="md:hidden text-center">

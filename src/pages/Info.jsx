@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from '../components/ui/Section';
-import { newsData, categories } from '../data/newsData';
+import { useNews } from '../hooks/useWordPressApi';
 
 // ページヒーロー
 const PageHero = () => (
@@ -119,7 +119,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
+// ローディングスピナー
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-20">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
+
 export const Info = () => {
+  const { news: newsData, categories, loading, error } = useNews();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -130,7 +138,7 @@ export const Info = () => {
       return newsData;
     }
     return newsData.filter((news) => news.category === selectedCategory);
-  }, [selectedCategory]);
+  }, [selectedCategory, newsData]);
 
   // ページネーション
   const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
@@ -155,49 +163,56 @@ export const Info = () => {
           className="fixed w-full h-screen bg-no-repeat opacity-20"
           style={{
             backgroundImage: `url(${import.meta.env.BASE_URL}info-fixbgi.png)`,
-            backgroundSize: 'contain',  // サイズ指定（contain=画像全体, 100%=元のサイズ, 120%=1.2倍など）
-            backgroundPosition: 'left center',  // 左右 上下（例: 'center top', 'left center', 'left bottom'）
-            top: '20%',  // 上下位置調整（0%=上端, 50%=中央, 100%=下端）※マイナス値も可能
-            left: '-10%'  // 左右位置調整（-25%などで左に寄せる）
+            backgroundSize: 'contain',
+            backgroundPosition: 'left center',
+            top: '20%',
+            left: '-10%'
           }}
         />
 
         <Container className="relative z-10">
-          {/* カテゴリーボタン */}
-          <div className="flex flex-wrap gap-4 mb-12 mt-8 justify-center">
-            {categories.map((category) => (
-              <CategoryButton
-                key={category.id}
-                category={category}
-                isActive={selectedCategory === category.id}
-                onClick={() => handleCategoryChange(category.id)}
-              />
-            ))}
-          </div>
-
-          {/* お知らせリスト */}
-          <div className="max-w-4xl mx-auto">
-            {currentNews.length > 0 ? (
-              <>
-                {currentNews.map((news) => (
-                  <NewsItem key={news.id} news={news} />
-                ))}
-
-                {/* ページネーション */}
-                {totalPages > 1 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
+          {/* ローディング表示 */}
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              {/* カテゴリーボタン */}
+              <div className="flex flex-wrap gap-4 mb-12 mt-8 justify-center">
+                {categories.map((category) => (
+                  <CategoryButton
+                    key={category.id}
+                    category={category}
+                    isActive={selectedCategory === category.id}
+                    onClick={() => handleCategoryChange(category.id)}
                   />
-                )}
-              </>
-            ) : (
-              <div className="text-center py-12 text-text-secondary">
-                お知らせがありません
+                ))}
               </div>
-            )}
-          </div>
+
+              {/* お知らせリスト */}
+              <div className="max-w-4xl mx-auto">
+                {currentNews.length > 0 ? (
+                  <>
+                    {currentNews.map((news) => (
+                      <NewsItem key={news.id} news={news} />
+                    ))}
+
+                    {/* ページネーション */}
+                    {totalPages > 1 && (
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12 text-text-secondary">
+                    お知らせがありません
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </Container>
       </section>
     </>
